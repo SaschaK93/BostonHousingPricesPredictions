@@ -1,0 +1,66 @@
+#Import Pandas
+import pandas as pd
+
+#Import CSV File
+url = "https://raw.githubusercontent.com/selva86/datasets/master/BostonHousing.csv"
+df = pd.read_csv(url)
+
+#Show the first 5 rows of the dataset
+print(df.head())
+
+#Analyze the dataset: info = data types, missing values, etc. describe = statistical summary of the dataset
+print(df.info())
+print(df.describe())
+
+#Visualize the relationship between the number of rooms (rm) and the price (medv)
+
+import matplotlib.pyplot as plt
+#plt.scatter(df["rm"], df["medv"])
+#plt.xlabel("Number of Rooms")
+#plt.ylabel("Price")
+#plt.show()
+
+#Model Building: Linear Regression
+#Import necessary libraries for model building
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+
+#Define the features (X) and the target variable (y)
+#X = df[["rm", "age", "tax", "dis"]]  # Number of Rooms, Age of the house, Tax, Distance to employment centers
+X = df.drop("medv", axis=1)  # All features except the target variable
+y = df["medv"]  # Price
+
+#Split the dataset into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+#Create an instance of the Linear Regression model
+model = LinearRegression()
+
+#Train the model on the training data
+model.fit(X_train, y_train)
+
+#Make predictions on the test set
+predictions = model.predict(X_test)
+print(predictions[:5])
+
+#Accuracy of the model
+print(model.score(X_test, y_test))
+
+#Calculate the predicted values for the entire dataset (for visualization purposes)
+x_values = df.drop("medv", axis=1)
+y_values = model.predict(x_values)
+
+#Visualize the relationship between the number of rooms (rm) and the price (medv) with the regression line
+#plt.scatter(df["rm"], df["medv"])
+
+#Modell Line (only possible if you have only one feature, in this case "rm"))
+#plt.plot(df["rm"], y_values, color="red")
+#plt.xlabel("Number of Rooms")
+#plt.ylabel("Price")
+#plt.show()
+
+#Feature Importance: Display the coefficients of the features to understand their impact on the target variable
+print(pd.DataFrame({
+    "Feature": X.columns,
+    "Weight": model.coef_
+}))
